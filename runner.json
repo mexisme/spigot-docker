@@ -1,0 +1,48 @@
+{
+    "variables": {
+        "version": "1.11.2",
+        "uid": "10000",
+        "gid": "10000"
+    },
+    "builders": [
+        {
+            "type": "docker",
+            "image": "alpine:3.5",
+            "pull": false,
+            "commit": true,
+            "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],
+            "changes": [
+                "USER minecraft",
+                "EXPOSE 25565",
+                "ENTRYPOINT cd /minecraft; java -Xms512M -Xmx1G -XX:MaxPermSize=128M -XX:+UseConcMarkSweepGC -jar /spigot-{{user `version`}}.jar"
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "apk --update add ca-certificates openjdk8-jre-base",
+                "addgroup -S -g {{user `gid`}} minecraft && adduser -S -u {{user `uid`}} -D -G minecraft -h /minecraft -s /bin/bash minecraft"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "spigot-{{user `version`}}.jar",
+            "destination": "/"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "chmod a+r /spigot-{{user `version`}}.jar"
+            ]
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "docker-tag",
+            "repository": "minecraft-spigot",
+            "tag": "{{user `version`}}"
+        }
+    ]
+}

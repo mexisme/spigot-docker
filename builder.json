@@ -1,0 +1,34 @@
+{
+    "variables": {
+        "version": "1.11.2",
+        "cwd": "{{env `PWD`}}"
+    },
+    "builders": [
+        {
+            "type": "docker",
+            "image": "alpine:3.5",
+            "pull": false,
+            "discard": true,
+            "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],
+            "changes": [ "USER minecraft" ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "apk --update add ca-certificates wget openjdk8 git bash",
+                "addgroup minecraft && adduser -D -G minecraft -h /minecraft -s /bin/bash minecraft",
+                "cd /minecraft",
+                "wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar",
+                "su -s /bin/bash -c 'java -jar BuildTools.jar' minecraft"
+            ]
+        },
+        {
+            "type": "file",
+            "direction": "download",
+            "source": "/minecraft/spigot-{{user `version`}}.jar",
+            "destination": "./"
+        }
+    ]
+}
