@@ -19,7 +19,7 @@
             "inline": [
                 "apk --no-cache --update upgrade",
                 "apk --no-cache add ca-certificates wget openjdk8 git bash",
-                "update-ca-sertificates --fresh",
+                "update-ca-certificates --fresh",
                 "addgroup minecraft && adduser -D -G minecraft -h /minecraft -s /bin/bash minecraft",
                 "cd /minecraft",
                 "wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar",
