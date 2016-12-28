@@ -1,8 +1,18 @@
 Build with Packer 0.12 or later (to support the "changes" attr)
 
-Run with:
+Set-up with:
 ```
-docker run --tty --name=minecraft-spigot -d -p 25565:25565 -v ${LOCAL-DIR}:/minecraft minecraft-spigot:1.11.2
+bundle install
+```
+NB: Should work immediately with Ruby 2.3.1
+
+Build with:
+```
+bundle exec rake build
 ```
 
-`${LOCAL-DIR}` is to persist the world-data and config files.
+Run with:
+```
+bundle exec rake run DIR=...
+```
+NB: Set `DIR` tp the directory for persisting the world-data and config files.
