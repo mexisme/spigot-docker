@@ -38,5 +38,5 @@ end
 desc "Run the Spigot Minecraft server"
 task :run do
   DIR = ENV['DIR'] or fail "You need to provide 'DIR=${minecraft-dir}' to set where Spigot stores config and World data"
-  MyShell::Benchmarked.run("#{DOCKER} run --detach --tty --publish #{PORT}:#{PORT} --volume #{DIR}:/minecraft minecraft-spigot:#{VERSION}")
+  MyShell::Benchmarked.run("#{DOCKER} run --detach --tty --name minecraft-spigot --publish #{PORT}:#{PORT} --volume #{DIR}:/minecraft minecraft-spigot:#{VERSION}")
 end
