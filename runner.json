@@ -22,8 +22,11 @@
         {
             "type": "shell",
             "inline": [
-                "apk --update add ca-certificates openjdk8-jre-base",
-                "addgroup -S -g {{user `gid`}} minecraft && adduser -S -u {{user `uid`}} -D -G minecraft -h /minecraft -s /bin/bash minecraft"
+                "apk --no-cache --update upgrade",
+                "apk --no-cache add ca-certificates openjdk8-jre-base",
+                "update-ca-sertificates --fresh",
+                "addgroup -S -g {{user `gid`}} minecraft && adduser -S -u {{user `uid`}} -D -G minecraft -h /minecraft -s /bin/bash minecraft",
+                "rm -rf /var/cache/apk/*"
             ]
         },
         {
