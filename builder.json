@@ -1,7 +1,14 @@
 {
     "variables": {
         "version": "1.11.2",
-        "cwd": "{{env `PWD`}}"
+        "spigot-url": "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar",
+        "cwd": "{{env `PWD`}}",
+        "local-artefact-dir": "artefacts",
+        "container-dir": "/minecraft",
+        "user": "minecraft",
+        "uid": "10000",
+        "group": "minecraft",
+        "gid": "10000"
     },
     "builders": [
         {
@@ -10,7 +17,7 @@
             "pull": false,
             "discard": true,
             "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],
-            "changes": [ "USER minecraft" ]
+            "changes": [ "USER {{user `user`}}" ]
         }
     ],
     "provisioners": [
@@ -20,17 +27,27 @@
                 "apk --no-cache --update upgrade",
                 "apk --no-cache add ca-certificates wget openjdk8 git bash",
                 "update-ca-certificates --fresh",
-                "addgroup minecraft && adduser -D -G minecraft -h /minecraft -s /bin/bash minecraft",
-                "cd /minecraft",
-                "wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar",
-                "su -s /bin/bash -c 'java -jar BuildTools.jar' minecraft"
+                "addgroup -S -g {{user `gid`}} {{user `group`}} && adduser -S -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
+                "cd {{user `container-dir`}}",
+                "wget {{user `spigot-url`}}",
+                "su -s /bin/bash -c 'java -jar BuildTools.jar' {{user `user`}}"
             ]
+        },
+        {
+            "type": "shell-local",
+            "command": "mkdir -p {{user `local-artefact-dir`}}"
         },
         {
             "type": "file",
             "direction": "download",
-            "source": "/minecraft/spigot-{{user `version`}}.jar",
-            "destination": "./"
+            "source": "{{user `container-dir`}}/spigot-{{user `version`}}.jar",
+            "destination": "./{{user `local-artefact-dir`}}/"
+        },
+        {
+            "type": "file",
+            "direction": "download",
+            "source": "{{user `container-dir`}}/BuildTools.log.txt",
+            "destination": "./{{user `local-artefact-dir`}}/"
         }
     ]
 }

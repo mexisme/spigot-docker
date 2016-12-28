@@ -1,7 +1,12 @@
 {
     "variables": {
         "version": "1.11.2",
+        "local-artefact-dir": "artefacts",
+        "container-artefact-dir": "/",
+        "container-dir": "/minecraft",
+        "user": "minecraft",
         "uid": "10000",
+        "group": "minecraft",
         "gid": "10000"
     },
     "builders": [
@@ -12,9 +17,9 @@
             "commit": true,
             "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],
             "changes": [
-                "USER minecraft",
+                "USER {{user `user`}}",
                 "EXPOSE 25565",
-                "ENTRYPOINT cd /minecraft; java -Xms512M -Xmx1G -XX:MaxPermSize=128M -XX:+UseConcMarkSweepGC -jar /spigot-{{user `version`}}.jar"
+                "ENTRYPOINT cd {{user `container-dir`}}; java -Xms512M -Xmx1G -XX:MaxPermSize=128M -XX:+UseConcMarkSweepGC -jar /spigot-{{user `version`}}.jar"
             ]
         }
     ],
@@ -25,19 +30,19 @@
                 "apk --no-cache --update upgrade",
                 "apk --no-cache add ca-certificates openjdk8-jre-base",
                 "update-ca-certificates --fresh",
-                "addgroup -S -g {{user `gid`}} minecraft && adduser -S -u {{user `uid`}} -D -G minecraft -h /minecraft -s /bin/bash minecraft",
+                "addgroup -S -g {{user `gid`}} {{user `group`}} && adduser -S -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
                 "rm -rf /var/cache/apk/*"
             ]
         },
         {
             "type": "file",
-            "source": "spigot-{{user `version`}}.jar",
-            "destination": "/"
+            "source": "{{user `local-artefact-dir`}}/spigot-{{user `version`}}.jar",
+            "destination": "{{user `container-artefact-dir`}}/"
         },
         {
             "type": "shell",
             "inline": [
-                "chmod a+r /spigot-{{user `version`}}.jar"
+                "chmod a+r {{user `container-artefact-dir`}}/spigot-{{user `version`}}.jar"
             ]
         }
     ],
