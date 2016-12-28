@@ -6,3 +6,6 @@ packer_cache/
 
 # Emacs backup files
 *~
+
+# Build-step artefacts
+artefacts/*
