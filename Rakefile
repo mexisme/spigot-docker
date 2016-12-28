@@ -23,9 +23,16 @@ task :help do
 end
 
 desc "Build the Spigot docker container"
-task :build do
-  MyShell::Benchmarked.run("#{PACKER} build builder.json")
-  MyShell::Benchmarked.run("#{PACKER} build runner.json")
+task :build => ['build:builder', 'build:runner']
+
+namespace :build do
+  task :builder do
+    MyShell::Benchmarked.run("#{PACKER} build builder.json")
+  end
+
+  task :runner do
+    MyShell::Benchmarked.run("#{PACKER} build runner.json")
+  end
 end
 
 desc "Run the Spigot Minecraft server"
