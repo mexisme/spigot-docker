@@ -14,6 +14,7 @@ DOCKER = 'docker'
 PACKER = 'packer'
 PORT = 25565
 VERSION = '1.11.2'
+ARTEFACT_DIR = 'artefacts'
 
 task :default => :help
 
@@ -23,15 +24,29 @@ task :help do
 end
 
 desc "Build the Spigot docker container"
-task :build => ['build:builder', 'build:runner']
+task :build => ['build:build_tools', 'build:spigot', 'build:spigot_server']
 
 namespace :build do
-  task :builder do
-    MyShell::Benchmarked.run("#{PACKER} build builder.json")
+  directory ARTEFACT_DIR
+
+  task :build_tools => "artefacts/BuildTools.jar"
+  file "artefacts/BuildTools.jar" => ARTEFACT_DIR do
+    MyShell::Benchmarked.run(
+      "#{PACKER} build -var 'local-artefact-dir=#{ARTEFACT_DIR}' build-tools.json"
+    )
   end
 
-  task :runner do
-    MyShell::Benchmarked.run("#{PACKER} build runner.json")
+  task :spigot => "artefacts/spigot-#{VERSION}.jar"
+  file "artefacts/spigot-#{VERSION}.jar" => ARTEFACT_DIR do
+    MyShell::Benchmarked.run(
+      "#{PACKER} build -var 'version=#{VERSION}' -var 'local-artefact-dir=#{ARTEFACT_DIR}' spigot.json"
+    )
+  end
+
+  task :spigot_server => ARTEFACT_DIR do
+    MyShell::Benchmarked.run(
+      "#{PACKER} build -var 'version=#{VERSION}' -var 'local-artefact-dir=#{ARTEFACT_DIR}' spigot-server.json"
+    )
   end
 end
 
