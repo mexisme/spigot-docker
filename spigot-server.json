@@ -1,7 +1,7 @@
 {
     "variables": {
-        "version": "1.11.2",
-        "local-artefact-dir": "artefacts",
+        "version": "CHANGE ME",
+        "local-artefact-dir": "CHANGE ME",
         "container-artefact-dir": "/",
         "container-dir": "/minecraft",
         "user": "minecraft",

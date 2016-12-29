@@ -1,9 +1,9 @@
 {
     "variables": {
-        "version": "1.11.2",
+        "version": "CHANGE ME",
         "spigot-url": "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar",
         "cwd": "{{env `PWD`}}",
-        "local-artefact-dir": "artefacts",
+        "local-artefact-dir": "CHANGE ME",
         "container-dir": "/minecraft",
         "user": "minecraft",
         "uid": "10000",

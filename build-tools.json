@@ -1,8 +1,7 @@
 {
     "variables": {
-        "version": "55",
         "cwd": "{{env `PWD`}}",
-        "local-artefact-dir": "artefacts",
+        "local-artefact-dir": "CHANGE ME",
         "container-dir": "/minecraft",
         "user": "minecraft",
         "uid": "10000",
