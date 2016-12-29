@@ -27,7 +27,7 @@
                 "apk --no-cache --update upgrade",
                 "apk --no-cache add ca-certificates wget openjdk8 maven git bash",
                 "update-ca-certificates --fresh",
-                "addgroup -S -g {{user `gid`}} {{user `group`}} && adduser -S -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}"
+                "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}"
             ]
         },
         {
