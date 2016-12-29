@@ -25,7 +25,7 @@
             "type": "shell",
             "inline": [
                 "apk --no-cache --update upgrade",
-                "apk --no-cache add ca-certificates wget openjdk8 maven git bash",
+                "apk --no-cache add ca-certificates wget openjdk8 git bash",
                 "update-ca-certificates --fresh",
                 "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}"
             ]
