@@ -25,17 +25,22 @@
             "type": "shell",
             "inline": [
                 "apk --no-cache --update upgrade",
-                "apk --no-cache add ca-certificates wget openjdk8 git bash",
+                "apk --no-cache add ca-certificates wget openjdk8 maven git bash",
                 "update-ca-certificates --fresh",
-                "addgroup -S -g {{user `gid`}} {{user `group`}} && adduser -S -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
-                "cd {{user `container-dir`}}",
-                "wget {{user `spigot-url`}}",
-                "su -s /bin/bash -c 'java -jar BuildTools.jar' {{user `user`}}"
+                "addgroup -S -g {{user `gid`}} {{user `group`}} && adduser -S -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}"
             ]
         },
         {
-            "type": "shell-local",
-            "command": "mkdir -p {{user `local-artefact-dir`}}"
+            "type": "file",
+            "source": "{{user `local-artefact-dir`}}/BuildTools.jar",
+            "destination": "{{user `container-dir`}}/"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "cd {{user `container-dir`}}",
+                "su -s /bin/bash -c 'java -jar BuildTools.jar' {{user `user`}}"
+            ]
         },
         {
             "type": "file",
