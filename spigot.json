@@ -38,8 +38,8 @@
         {
             "type": "shell",
             "inline": [
-                "cd {{user `container-dir`}}",
-                "su -s /bin/bash -c 'java -jar BuildTools.jar' {{user `user`}}"
+                "chmod a+r {{user `container-dir`}}/BuildTools.jar",
+                "su -c 'export JAVA_HOME=/usr; java -jar BuildTools.jar' - {{user `user`}}"
             ]
         },
         {
