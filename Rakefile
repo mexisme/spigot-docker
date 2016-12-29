@@ -11,7 +11,7 @@ LOG = Logging.logger(STDOUT)
 LOG.level = :debug if DEBUG
 
 DOCKER = 'docker'
-PACKER = 'packer'
+PACKER = 'packer build' + (DEBUG ? ' -debug' : '')
 PORT = 25565
 VERSION = '1.11.2'
 ARTEFACT_DIR = 'artefacts'
@@ -32,26 +32,36 @@ namespace :build do
   task :build_tools => "artefacts/BuildTools.jar"
   file "artefacts/BuildTools.jar" => ARTEFACT_DIR do
     MyShell::Benchmarked.run(
-      "#{PACKER} build -var 'local-artefact-dir=#{ARTEFACT_DIR}' build-tools.json"
+      "#{PACKER_BUILD} -var 'local-artefact-dir=#{ARTEFACT_DIR}' build-tools.json"
     )
   end
 
   task :spigot => "artefacts/spigot-#{VERSION}.jar"
   file "artefacts/spigot-#{VERSION}.jar" => ARTEFACT_DIR do
     MyShell::Benchmarked.run(
-      "#{PACKER} build -var 'version=#{VERSION}' -var 'local-artefact-dir=#{ARTEFACT_DIR}' spigot.json"
+      "#{PACKER_BUILD} -var 'version=#{VERSION}' -var 'local-artefact-dir=#{ARTEFACT_DIR}' spigot.json"
     )
   end
 
   task :spigot_server => ARTEFACT_DIR do
     MyShell::Benchmarked.run(
-      "#{PACKER} build -var 'version=#{VERSION}' -var 'local-artefact-dir=#{ARTEFACT_DIR}' spigot-server.json"
+      "#{PACKER_BUILD} -var 'version=#{VERSION}' -var 'local-artefact-dir=#{ARTEFACT_DIR}' spigot-server.json"
     )
   end
 end
 
-desc "Run the Spigot Minecraft server"
-task :run do
+desc "Bring the Spigot Minecraft server up"
+task :up do
   DIR = ENV['DIR'] or fail "You need to provide 'DIR=${minecraft-dir}' to set where Spigot stores config and World data"
   MyShell::Benchmarked.run("#{DOCKER} run --detach --tty --name minecraft-spigot --publish #{PORT}:#{PORT} --volume #{DIR}:/minecraft minecraft-spigot:#{VERSION}")
+end
+
+desc "Bring the Spigot Minecraft server down"
+task :down do
+  MyShell::Benchmarked.run("#{DOCKER} stop minecraft-spigot && #{DOCKER} rm minecraft-spigot")
+end
+
+desc "Show the Spigot Minecraft server's logs"
+task :logs do
+  MyShell::Benchmarked.run("#{DOCKER} logs minecraft-spigot")
 end
