@@ -65,5 +65,5 @@ end
 
 desc "Show the Spigot Minecraft server's logs"
 task :logs do
-  MyShell::Benchmarked.run("#{DOCKER} logs minecraft-spigot")
+  MyShell::Benchmarked.run("#{DOCKER} logs -f minecraft-spigot")
 end
