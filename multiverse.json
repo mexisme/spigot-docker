@@ -1,0 +1,58 @@
+{
+    "variables": {
+        "cwd": "{{env `PWD`}}",
+        "local-artefact-dir": "CHANGE ME",
+        "container-dir": "/minecraft",
+        "user": "minecraft",
+        "uid": "10000",
+        "group": "minecraft",
+        "gid": "10000"
+    },
+    "builders": [
+        {
+            "type": "docker",
+            "image": "alpine:3.5",
+            "pull": false,
+            "discard": true,
+            "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],
+            "changes": [
+                "ENV JAVA_HOME=/usr",
+                "USER {{user `user`}}"
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "apk --no-cache --update upgrade",
+                "apk --no-cache add ca-certificates openjdk8 maven git bash",
+                "update-ca-certificates --fresh",
+                "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
+                "su -c 'git clone https://github.com/Multiverse/Multiverse-Core.git' - {{user `user`}}",
+                "su -c 'cd Multiverse-Core; git submodule update --init --recursive; mvn install' - {{user `user`}}",
+                "su -c 'cd Multiverse-Core/target; tar cvf ~/multiverse-core.tar *.jar' - {{user `user`}}"
+            ]
+        },
+        {
+            "type": "file",
+            "direction": "download",
+            "source": "{{user `container-dir`}}/multiverse-core.tar",
+            "destination": "./{{user `local-artefact-dir`}}/"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "su -c 'git clone https://github.com/Multiverse/Multiverse-Portals.git' - {{user `user`}}",
+                "su -c 'cd Multiverse-Portals; mvn install' - {{user `user`}}",
+                "su -c 'cd Multiverse-Portals/target; tar cvf ~/multiverse-portals.tar *.jar' - {{user `user`}}"
+            ]
+        },
+        {
+            "type": "file",
+            "direction": "download",
+            "source": "{{user `container-dir`}}/multiverse-portals.tar",
+            "destination": "./{{user `local-artefact-dir`}}/"
+        }
+    ]
+}

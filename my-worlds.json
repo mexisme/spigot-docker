@@ -1,0 +1,47 @@
+{
+    "variables": {
+        "cwd": "{{env `PWD`}}",
+        "local-artefact-dir": "CHANGE ME",
+        "container-dir": "/minecraft",
+        "user": "minecraft",
+        "uid": "10000",
+        "group": "minecraft",
+        "gid": "10000"
+    },
+    "builders": [
+        {
+            "type": "docker",
+            "image": "alpine:3.5",
+            "pull": false,
+            "discard": true,
+            "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],
+            "changes": [
+                "ENV JAVA_HOME=/usr",
+                "USER {{user `user`}}"
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "apk --no-cache --update upgrade",
+                "apk --no-cache add ca-certificates openjdk8 maven git bash",
+                "update-ca-certificates --fresh",
+                "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
+                "#su -c 'git clone https://github.com/bergerhealer/BKCommonLib.git' - {{user `user`}}",
+                "#su -c 'cd BKCommonLib; mvn install' - {{user `user`}}",
+                "su -c 'git clone https://github.com/bergerhealer/MyWorlds.git' - {{user `user`}}",
+                "su -c 'cd MyWorlds; mvn package' - {{user `user`}}",
+                "#su -c 'tar cvf ~/my-worlds.tar BKCommonLib/target/*.jar MyWorlds/target/*.jar' - {{user `user`}}",
+                "su -c 'tar cvf ~/my-worlds.tar .m2/repository/com/bergerkiller/bukkit/BKCommonLib/*/BKCommonLib-*.jar MyWorlds/target/*.jar' - {{user `user`}}"
+            ]
+        },
+        {
+            "type": "file",
+            "direction": "download",
+            "source": "{{user `container-dir`}}/my-worlds.tar",
+            "destination": "./{{user `local-artefact-dir`}}/"
+        }
+    ]
+}

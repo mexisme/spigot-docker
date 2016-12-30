@@ -1,0 +1,45 @@
+{
+    "variables": {
+        "cwd": "{{env `PWD`}}",
+        "local-artefact-dir": "CHANGE ME",
+        "container-dir": "/minecraft",
+        "user": "minecraft",
+        "uid": "10000",
+        "group": "minecraft",
+        "gid": "10000"
+    },
+    "builders": [
+        {
+            "type": "docker",
+            "image": "alpine:3.5",
+            "pull": false,
+            "discard": true,
+            "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],
+            "changes": [
+                "ENV JAVA_HOME=/usr",
+                "USER {{user `user`}}"
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "apk --no-cache --update upgrade",
+                "apk --no-cache add ca-certificates openjdk8 git bash",
+                "update-ca-certificates --fresh",
+                "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
+                "echo 'org.gradle.jvmargs=-Xmx3G' >{{user `container-dir`}}/gradle.properties",
+                "su -c 'git clone https://github.com/sk89q/WorldEdit.git' - {{user `user`}}",
+                "su -c 'cd WorldEdit; cp ~/gradle.properties ./; ./gradlew --info clean setupDecompWorkspace && ./gradlew build' - {{user `user`}}",
+                "su -c 'cd WorldEdit; tar cvf ~/worldedit-dist.tar worldedit-*/build/libs/*-dist.jar' - {{user `user`}}"
+            ]
+        },
+        {
+            "type": "file",
+            "direction": "download",
+            "source": "{{user `container-dir`}}/worldedit-dist.tar",
+            "destination": "./{{user `local-artefact-dir`}}/"
+        }
+    ]
+}
