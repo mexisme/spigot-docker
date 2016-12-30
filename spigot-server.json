@@ -19,7 +19,7 @@
             "changes": [
                 "USER {{user `user`}}",
                 "EXPOSE 25565",
-                "ENTRYPOINT cd {{user `container-dir`}}; java -Xms512M -Xmx1G -XX:MaxPermSize=128M -XX:+UseConcMarkSweepGC -jar /spigot-{{user `version`}}.jar"
+                "ENTRYPOINT cd {{user `container-dir`}}; java -Xms512M -Xmx1G -XX:MaxPermSize=128M -XX:+UseConcMarkSweepGC -jar {{user `container-artefact-dir`}}/spigot-{{user `version`}}.jar"
             ]
         }
     ],
@@ -31,7 +31,8 @@
                 "apk --no-cache add ca-certificates openjdk8-jre-base",
                 "update-ca-certificates --fresh",
                 "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
-                "rm -rf /var/cache/apk/*"
+                "rm -rf /var/cache/apk/*",
+                "mkdir -m 755 -p {{user `container-artefact-dir`}}"
             ]
         },
         {
