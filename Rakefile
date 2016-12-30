@@ -51,6 +51,8 @@ namespace :build do
 end
 
 desc "Bring the Spigot Minecraft server up"
+task :restart => [:down, :up]
+
 task :up do
   DIR = ENV['DIR'] or fail "You need to provide 'DIR=${minecraft-dir}' to set where Spigot stores config and World data"
   MyShell::Benchmarked.run("#{DOCKER} run --detach --tty --name minecraft-spigot --publish #{PORT}:#{PORT} --volume #{DIR}:/minecraft minecraft-spigot:#{VERSION}")
