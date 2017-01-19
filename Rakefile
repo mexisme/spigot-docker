@@ -11,7 +11,7 @@ LOG = Logging.logger(STDOUT)
 LOG.level = :debug if DEBUG
 
 DOCKER = 'docker'
-PACKER = 'packer build' + (DEBUG ? ' -debug' : '')
+PACKER_BUILD = 'packer build' + (DEBUG ? ' -debug' : '')
 PORT = 25565
 VERSION = '1.11.2'
 ARTEFACT_DIR = 'artefacts'
