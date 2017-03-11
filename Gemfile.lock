@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     little-plugger (1.1.4)
-    logging (2.1.0)
+    logging (2.2.0)
       little-plugger (~> 1.1)
       multi_json (~> 1.10)
     multi_json (1.12.1)
