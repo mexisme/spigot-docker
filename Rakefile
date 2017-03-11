@@ -29,6 +29,20 @@ task :build => ['build:build_tools', 'build:spigot', 'build:spigot_server']
 namespace :build do
   directory ARTEFACT_DIR
 
+  task :worldedit => "artefacts/worldedit-dist.tar"
+  file "artefacts/worldedit-dist.tar" => ARTEFACT_DIR do
+    MyShell::Benchmarked.run(
+      "#{PACKER_BUILD} -var 'local-artefact-dir=#{ARTEFACT_DIR}' worldedit.json"
+    )
+  end
+
+  task :worldedit => "artefacts/mulitverse-core.tar"
+  file "artefacts/multiverse-core.tar" => ARTEFACT_DIR do
+    MyShell::Benchmarked.run(
+      "#{PACKER_BUILD} -var 'local-artefact-dir=#{ARTEFACT_DIR}' multiverse.json"
+    )
+  end
+
   task :build_tools => "artefacts/BuildTools.jar"
   file "artefacts/BuildTools.jar" => ARTEFACT_DIR do
     MyShell::Benchmarked.run(
