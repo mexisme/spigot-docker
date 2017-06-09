@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     little-plugger (1.1.4)
-    logging (2.2.0)
+    logging (2.2.2)
       little-plugger (~> 1.1)
       multi_json (~> 1.10)
     multi_json (1.12.1)
@@ -15,8 +15,5 @@ DEPENDENCIES
   logging
   rake
 
-RUBY VERSION
-   ruby 2.3.1p112
-
 BUNDLED WITH
-   1.12.5
+   1.13.6
