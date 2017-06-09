@@ -13,7 +13,7 @@ LOG.level = :debug if DEBUG
 DOCKER = 'docker'
 PACKER_BUILD = 'packer build' + (DEBUG ? ' -debug' : '')
 PORT = 25565
-VERSION = '1.11.2'
+VERSION = '1.12'
 ARTEFACT_DIR = 'artefacts'
 
 task :default => :help
