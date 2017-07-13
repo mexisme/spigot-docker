@@ -11,7 +11,7 @@
     "builders": [
         {
             "type": "docker",
-            "image": "alpine:3.5",
+            "image": "alpine:3.6",
             "pull": false,
             "discard": true,
             "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],

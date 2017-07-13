@@ -16,6 +16,8 @@ PORT = 25565
 VERSION = '1.12'
 ARTEFACT_DIR = 'artefacts'
 
+DEFAULT_DIR = '/opt/minecraft'
+
 task :default => :help
 
 desc "Show help"
@@ -36,7 +38,7 @@ namespace :build do
     )
   end
 
-  task :worldedit => "artefacts/mulitverse-core.tar"
+  task :multiverse => "artefacts/mulitverse-core.tar"
   file "artefacts/multiverse-core.tar" => ARTEFACT_DIR do
     MyShell::Benchmarked.run(
       "#{PACKER_BUILD} -var 'local-artefact-dir=#{ARTEFACT_DIR}' multiverse.json"
@@ -68,7 +70,8 @@ desc "Bring the Spigot Minecraft server up"
 task :restart => [:down, :up]
 
 task :up do
-  DIR = ENV['DIR'] or fail "You need to provide 'DIR=${minecraft-dir}' to set where Spigot stores config and World data"
+  DIR = (ENV['DIR'] || DEFAULT_DIR) \
+    or fail "You need to provide 'DIR=${minecraft-dir}' to set where Spigot stores config and World data"
   MyShell::Benchmarked.run("#{DOCKER} run --detach --tty --name minecraft-spigot --publish #{PORT}:#{PORT} --volume #{DIR}:/minecraft minecraft-spigot:#{VERSION}")
 end
 
@@ -80,4 +83,13 @@ end
 desc "Show the Spigot Minecraft server's logs"
 task :logs do
   MyShell::Benchmarked.run("#{DOCKER} logs -f minecraft-spigot")
+end
+
+desc "Backup the files"
+task :backup do
+  DIR = (ENV['DIR'] || DEFAULT_DIR) \
+    or fail "You need to provide 'DIR=${minecraft-dir}' to set where Spigot stores config and World data"
+  t = Time.now
+  iso_t = t.strftime("%Y%m%d-%H%M%S")
+  MyShell::Benchmarked.run("sudo tar -C #{DIR} -cvf minecraft.#{iso_t}.tar .")
 end
