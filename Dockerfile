@@ -1,20 +1,27 @@
-FROM alpine:3.5
-#FROM openjdk:jdk-alpine
+FROM alpine:3.9 as Base
 
-#ENV SpigotVersion=1.11
+RUN command addgroup minecraft && \
+    adduser -D -G minecraft -h /minecraft -s /bin/bash minecraft
 
-RUN apk --update add ca-certificates wget openjdk8 git bash && \
-    addgroup minecraft && adduser -D -G minecraft -h /minecraft -s /bin/bash minecraft
+RUN apk --no-cache --update upgrade && \
+    apk --no-cache --update add ca-certificates bash
 
-#VOLUME ["${PWD}/build:/minecraft"]
-#VOLUME $PWD/build:/minecraft
-VOLUME ["/home/wj/dev/docker/minecraft-spigot/build:/minecraft"]
 USER minecraft
-#RUN /bin/bash -c "cd /SPIGOT; java -jar BuildTools.jar"
-RUN cd /minecraft && \
-    wget https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar && \
-    java -jar BuildTools.jar
-#RUN java -jar BuildTools.jar
+WORKDIR /minecraft
 
-#RUN cp /SPIGOT/spigot-${SpigotVersion}.jar ./
-COPY /minecraft/spigot-*.jar ./
+FROM Base as Builder
+
+USER root
+
+RUN apk --no-cache --update add git make maven openjdk8
+
+USER minecraft
+COPY --chown=minecraft:minecraft Makefile ./
+
+RUN make spigot
+
+FROM Base
+
+COPY --from=Builder --chown=minecraft:minecraft /minecraft/artefacts/spigot-*.jar ./
+
+CMD java -Xms512M -Xmx1G -XX:MaxPermSize=128M -XX:+UseConcMarkSweepGC -jar spigot-*.jar

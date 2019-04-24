@@ -1,0 +1,89 @@
+version: '3'
+
+services:
+  base:
+    image: base
+    build:
+      context: .
+      dockerfile: base.dockerfile
+
+  spigot:
+    image: spigot
+    build:
+      context: .
+      dockerfile: spigot.dockerfile
+    depends_on:
+      - base
+      - build-spigot
+
+  builder:
+    image: builder
+    build:
+      context: .
+      dockerfile: builder.dockerfile
+    depends_on:
+      - base
+
+  build-builder:
+    image: builder
+    depends_on:
+      - builder
+    environment:
+      - JAVA_HOME=/usr
+    volumes:
+      - ./Makefile:/minecraft/Makefile
+      - ./artefacts:/minecraft/artefacts
+      - ./src:/minecraft/src
+    stdin_open: true
+    tty: true
+
+  build-tools:
+    image: builder
+    depends_on:
+      - builder
+    environment:
+      - JAVA_HOME=/usr
+    volumes:
+      - ./Makefile:/minecraft/Makefile
+      - ./artefacts:/minecraft/artefacts
+      - ./src:/minecraft/src
+    command: make build-tools
+
+  build-multiverse:
+    image: builder
+    depends_on:
+      - builder
+    environment:
+      - JAVA_HOME=/usr
+    volumes:
+      - ./Makefile:/minecraft/Makefile
+      - ./artefacts:/minecraft/artefacts
+      - ./src:/minecraft/src
+    command: make multiverse
+
+  build-worldedit:
+    image: builder
+    depends_on:
+      - builder
+    environment:
+      - JAVA_HOME=/usr
+    volumes:
+      - ./Makefile:/minecraft/Makefile
+      - ./artefacts:/minecraft/artefacts
+      - ./src:/minecraft/src
+    command: make worldedit
+
+  build-spigot:
+    image: builder
+    depends_on:
+      - build-tools
+    environment:
+      - JAVA_HOME=/usr
+    volumes:
+      - ./Makefile:/minecraft/Makefile
+      - ./artefacts:/minecraft/artefacts
+      - ./src:/minecraft/src
+    command: make spigot
+
+networks:
+  minecraft:
