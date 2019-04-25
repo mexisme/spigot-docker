@@ -1,0 +1,9 @@
+[submodule "src/buildtools"]
+	path = src/buildtools
+	url = https://hub.spigotmc.org/stash/scm/spigot/buildtools.git
+[submodule "src/Multiverse-Core"]
+	path = src/Multiverse-Core
+	url = https://github.com/Multiverse/Multiverse-Core.git
+[submodule "src/WorldEdit"]
+	path = src/WorldEdit
+	url = https://github.com/sk89q/WorldEdit.git
