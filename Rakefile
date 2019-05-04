@@ -14,6 +14,7 @@ DOCKER = 'docker'
 PACKER_BUILD = 'packer build' + (DEBUG ? ' -debug' : '')
 PORT = 25565
 VERSION = '1.13.2'
+# VERSION = '1.14'
 ARTEFACT_DIR = 'artefacts'
 
 DEFAULT_DIR = '/opt/minecraft'
@@ -91,5 +92,5 @@ task :backup do
     or fail "You need to provide 'DIR=${minecraft-dir}' to set where Spigot stores config and World data"
   t = Time.now
   iso_t = t.strftime("%Y%m%d-%H%M%S")
-  MyShell::Benchmarked.run("sudo tar -C #{DIR} -cvf minecraft.#{iso_t}.tar .")
+  MyShell::Benchmarked.run("sudo tar -C #{DIR} -cvf BACKUP/minecraft.#{iso_t}.tar .")
 end
