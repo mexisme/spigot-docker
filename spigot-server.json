@@ -28,7 +28,7 @@
             "type": "shell",
             "inline": [
                 "apk --no-cache --update upgrade",
-                "apk --no-cache add ca-certificates openjdk8-jre-base",
+                "apk --no-cache add ca-certificates nss openjdk8-jre-base",
                 "update-ca-certificates --fresh",
                 "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
                 "rm -rf /var/cache/apk/*",
