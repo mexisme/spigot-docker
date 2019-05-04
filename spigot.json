@@ -39,7 +39,7 @@
             "type": "shell",
             "inline": [
                 "chmod a+r {{user `container-dir`}}/BuildTools.jar",
-                "su -c 'export JAVA_HOME=/usr; java -jar BuildTools.jar' - {{user `user`}}"
+                "su -c 'export JAVA_HOME=/usr; java -jar BuildTools.jar --rev {{user `version`}}' - {{user `user`}}"
             ]
         },
         {
