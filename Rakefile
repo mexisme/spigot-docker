@@ -13,7 +13,7 @@ LOG.level = :debug if DEBUG
 DOCKER = 'docker'
 PACKER_BUILD = 'packer build' + (DEBUG ? ' -debug' : '')
 PORT = 25565
-VERSION = '1.13'
+VERSION = '1.13.2'
 ARTEFACT_DIR = 'artefacts'
 
 DEFAULT_DIR = '/opt/minecraft'
