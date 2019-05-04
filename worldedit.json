@@ -26,12 +26,14 @@
             "type": "shell",
             "inline": [
                 "apk --no-cache --update upgrade",
-                "apk --no-cache add ca-certificates openjdk8 git bash",
+                "apk --no-cache add ca-certificates nss openjdk8 git bash",
                 "update-ca-certificates --fresh",
                 "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
-                "echo 'org.gradle.jvmargs=-Xmx3G' >{{user `container-dir`}}/gradle.properties",
-                "su -c 'git clone https://github.com/sk89q/WorldEdit.git' - {{user `user`}}",
-                "su -c 'cd WorldEdit; cp ~/gradle.properties ./; ./gradlew --info clean setupDecompWorkspace && ./gradlew build' - {{user `user`}}",
+                "( echo 'org.gradle.jvmargs=-Xmx3G'; echo 'org.gradle.daemon=false' ) >{{user `container-dir`}}/gradle.properties",
+                "su -c 'git clone https://github.com/EngineHub/WorldEdit.git' - {{user `user`}}",
+                "# 'setupDecompWorkspace' is only needed for versions before 1.13:",
+                "# su -c 'cd WorldEdit; cp ~/gradle.properties ./; ./gradlew --info clean setupDecompWorkspace && ./gradlew build' - {{user `user`}}",
+                "su -c 'cd WorldEdit; ./gradlew clean && ./gradlew build' - {{user `user`}}",
                 "su -c 'cd WorldEdit; tar cvf ~/worldedit-dist.tar worldedit-*/build/libs/*-dist.jar' - {{user `user`}}"
             ]
         },
