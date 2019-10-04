@@ -13,8 +13,8 @@ LOG.level = :debug if DEBUG
 DOCKER = 'docker'
 PACKER_BUILD = 'packer build' + (DEBUG ? ' -debug' : '')
 PORT = 25565
-VERSION = '1.13.2'
-# VERSION = '1.14'
+# VERSION = '1.13.2'
+VERSION = '1.14.4'
 ARTEFACT_DIR = 'artefacts'
 
 DEFAULT_DIR = '/opt/minecraft'
@@ -35,7 +35,15 @@ namespace :build do
   task :worldedit => "#{ARTEFACT_DIR}/worldedit-dist.tar"
   file "#{ARTEFACT_DIR}/worldedit-dist.tar" => ARTEFACT_DIR do
     MyShell::Benchmarked.run(
-      "#{PACKER_BUILD} -var 'local-artefact-dir=#{ARTEFACT_DIR}' worldedit.json"
+      # "#{PACKER_BUILD} -var 'version=7.0.1' -var 'local-artefact-dir=#{ARTEFACT_DIR}' worldedit.json"
+      "#{PACKER_BUILD} -var 'version=master' -var 'local-artefact-dir=#{ARTEFACT_DIR}' worldedit.json"
+    )
+  end
+
+  task :worldguard => "#{ARTEFACT_DIR}/worldguard-dist.tar"
+  file "#{ARTEFACT_DIR}/worldguard-dist.tar" => ARTEFACT_DIR do
+    MyShell::Benchmarked.run(
+      "#{PACKER_BUILD} -var 'version=master' -var 'local-artefact-dir=#{ARTEFACT_DIR}' worldguard.json"
     )
   end
 

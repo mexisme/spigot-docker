@@ -1,6 +1,7 @@
 {
     "variables": {
         "cwd": "{{env `PWD`}}",
+        "version": "CHANGE ME",
         "local-artefact-dir": "CHANGE ME",
         "container-dir": "/minecraft",
         "user": "minecraft",
@@ -11,7 +12,7 @@
     "builders": [
         {
             "type": "docker",
-            "image": "alpine:3.9",
+            "image": "alpine:3.10",
             "pull": false,
             "discard": true,
             "run_command": [ "-d", "-i", "-t", "{{.Image}}", "/bin/sh" ],
@@ -31,6 +32,7 @@
                 "addgroup -g {{user `gid`}} {{user `group`}} && adduser -u {{user `uid`}} -D -G {{user `group`}} -h {{user `container-dir`}} -s /bin/bash {{user `user`}}",
                 "( echo 'org.gradle.jvmargs=-Xmx3G'; echo 'org.gradle.daemon=false' ) >{{user `container-dir`}}/gradle.properties",
                 "su -c 'git clone https://github.com/EngineHub/WorldEdit.git' - {{user `user`}}",
+                "su -c 'cd WorldEdit; git checkout {{user `version`}}' - {{user `user`}}",
                 "# 'setupDecompWorkspace' is only needed for versions before 1.13:",
                 "# su -c 'cd WorldEdit; cp ~/gradle.properties ./; ./gradlew --info clean setupDecompWorkspace && ./gradlew build' - {{user `user`}}",
                 "su -c 'cd WorldEdit; ./gradlew clean && ./gradlew build' - {{user `user`}}",
