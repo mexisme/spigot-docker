@@ -44,3 +44,11 @@ services:
     depends_on:
       - init
 
+  worldedit:
+    image: worldedit
+    build:
+      context: .
+      dockerfile: worldedit.dockerfile
+    depends_on:
+      - init
+
