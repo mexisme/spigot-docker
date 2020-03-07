@@ -18,6 +18,8 @@ services:
     build:
       context: .
       dockerfile: java.dockerfile
+    depends_on:
+      - init
 
   spigot:
     image: spigot:${VERSION:-1.15.2}
@@ -25,4 +27,20 @@ services:
       args:
         VERSION: ${VERSION:-1.15.2}
       context: .
-      dockerfile: spigot-builder.dockerfile
+      dockerfile: spigot.dockerfile
+    ports:
+      - 25565:25565
+    volumes:
+      - ${DIR:-/opt/minecraft}:/minecraft
+    tty: true
+    depends_on:
+      - java
+
+  multiverse:
+    image: multiverse
+    build:
+      context: .
+      dockerfile: multiverse.dockerfile
+    depends_on:
+      - init
+
