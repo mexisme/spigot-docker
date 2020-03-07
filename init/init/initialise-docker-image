@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Initialises the base image with our preferred defaults.
+
+## NOTE: -o pipefail not supported by Debian dash:
+# set -euo pipefail
+set -e -u
+[ "${DEBUG:-}" ] && set -x
+
+if [ -f /etc/debian_version ]; then
+  # Creating the man pages directory to deal with the slim variants not having it.
+  mkdir -p /usr/share/man/man1
+
+  # Get the most recent package list for this version
+  apt update
+  apt upgrade -y
+
+  # Installs some fairly useful, standard tools for Debian builds
+  install-apt-packages apt-transport-https ca-certificates locales gnupg curl runit
+
+  # Set the Locale to be a UTF-8 variant
+  echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+  locale-gen
+fi
+
+install-apk-packages ca-certificates curl runit
+
+# NOTE: 'runit' is not available in Centos' default repo's:
+install-dnf-packages --nodocs ca-certificates curl glibc-langpack-en

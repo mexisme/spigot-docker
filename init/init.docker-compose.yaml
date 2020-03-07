@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+  ##########
+  # Initialisers
+
+  # These are "initial" Docker images, setting basics like locales
+  # "app" user and some minimal required packages.
+
+  init:
+    image: base:init
+    build:
+      context: .
+      dockerfile: init.dockerfile
+
+##########
+
+  aws-tf-setup:
+    image: base:aws-tf
+    depends_on:
+      - init
+    build:
+      context: .
+      dockerfile: aws-tf.dockerfile
+    volumes:
+      - ~/.aws/credentials:/app/.aws/credentials:ro
+      - ~/.aws/config:/app/.aws/config:ro
+      - docker-aws-cli-cache:/app/.aws/cli/cache
+      - docker-terraform-cache:/app/.terraform
+    user: root
+    command: /bin/sh -c "chown -R app:app /app/.aws/cli/cache /app/.terraform"
+
+  aws-tf:
+    image: base:aws-tf
+    depends_on:
+      - aws-tf-setup
+    volumes:
+      - ~/.aws/credentials:/app/.aws/credentials:ro
+      - ~/.aws/config:/app/.aws/config:ro
+      - docker-aws-cli-cache:/app/.aws/cli/cache
+      - docker-terraform-cache:/app/.terraform
+      - .:/app/src
+    environment:
+      - AWS_DEFAULT_PROFILE
+      - AWS_DEFAULT_REGION
+    working_dir: /app/src
+
+volumes:
+  docker-aws-cli-cache:
+  docker-terraform-cache:

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+## NOTE: -o pipefail not supported by Debian dash:
+# set -euo pipefail
+set -e -u
+[ "${DEBUG:-}" ] && set -x
+
+. `dirname $0`/errors-lib.sh
+
+[ -f /etc/centos-release ] || eval_exit_code "" log_warn "'$0' is for RedHat / Centos"
+
+[ -n "$*" ] || eval_exit log_error "No package names supplied to install"
+
+dnf -y update
+dnf -y install "$@"
+
+# Empty the DNF cache, so it doesn't waste space in our image:
+dnf clean all
