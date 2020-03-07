@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  ##########
+  # Initialisers
+
+  # These are "initial" Docker images, setting basics like locales
+  # "app" user and some minimal required packages.
+
+  init:
+    image: base:init
+    build:
+      context: init
+      dockerfile: init.dockerfile
+
+  java:
+    image: base:java
+    build:
+      context: .
+      dockerfile: java.dockerfile
+
+  spigot:
+    image: spigot:${VERSION:-1.15.2}
+    build:
+      args:
+        VERSION: ${VERSION:-1.15.2}
+      context: .
+      dockerfile: spigot-builder.dockerfile
