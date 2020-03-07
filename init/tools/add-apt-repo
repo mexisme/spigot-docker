@@ -1,0 +1,71 @@
+#!/bin/sh
+
+## NOTE: -o pipefail not supported by Debian dash:
+# set -euo pipefail
+set -e -u
+[ "${DEBUG:-}" ] && set -x
+
+. `dirname $0`/errors-lib.sh
+
+[ -f /etc/debian_version ] || eval_exit_code "" log_warn "Not running on Debian"
+
+APT_REPO=""
+APT_DIST=""
+APT_COMPONENTS=""
+APT_KEY_URL=""
+SOURCE_LIST_FILE=""
+
+while [ -n "${1:-}" ]; do
+  case "$1" in
+    # The URL of the APT Repo we want to add:
+    --repo)
+      shift
+      APT_REPO="$1"; shift
+      ;;
+    # The APT distribution
+    # "stretch" is Debian 9, for example
+    --distribution)
+      shift
+      APT_DIST="$1"; shift
+      ;;
+    # The APT components
+    # e.g. "main", "contrib"
+    --components)
+      shift
+      APT_COMPONENTS="$1"; shift
+      ;;
+    # The URL of the APT installtion (GPG) key
+    --aptkeyurl)
+      shift
+      APT_KEY_URL="$1"; shift
+      ;;
+    # The file within /etc/apt/sources.list.d/ to store the APT Repo details
+    --sourcelistfile)
+      shift
+      SOURCE_LIST_FILE="$1"; shift
+      ;;
+    *)
+      eval_exit log_error "Unrecognised argument '$1'"
+      ;;
+  esac
+done
+
+# TODO(willjr): Should really test for values starting with "--" but I really don't want to write *that* code in Bash
+[ -n "$APT_REPO" ] || eval_exit log_error "--repo not supplied"
+[ -n "$SOURCE_LIST_FILE" ] || eval_exit log_error "--sourcelistfile not supplied"
+[ -n "$APT_DIST" ] || APT_DIST="stretch"
+[ -n "$APT_COMPONENTS" ] || APT_COMPONENTS="main"
+
+# NOTE: This will fail if 'curl' is not installed:
+[ -n "$APT_KEY_URL" ] && \
+  curl -sSL "$APT_KEY_URL" | apt-key add -
+
+# TODO (willjr): Some hard-coded settings, here...
+echo "deb [arch=amd64] ${APT_REPO} ${APT_DIST} ${APT_COMPONENTS}" >/etc/apt/sources.list.d/"$SOURCE_LIST_FILE".list
+
+# Make sure we can update from the new sources:
+apt update
+
+# Clean-up the APT cache dirs, so we don't bloat the image:
+apt clean
+rm -rf /var/lib/apt/lists/*

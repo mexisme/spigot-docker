@@ -1,0 +1,19 @@
+#!/bin/sh
+
+## NOTE: -o pipefail not supported by Debian dash:
+# set -euo pipefail
+set -e -u
+[ "${DEBUG:-}" ] && set -x
+
+. `dirname $0`/errors-lib.sh
+
+[ -f /etc/debian_version ] || eval_exit_code "" log_warn "'$0' is for Debian"
+
+[ -n "$*" ] || eval_exit log_error "No package names supplied to install"
+
+apt-get update
+apt-get -y install "$@"
+
+# Empty the APT cache, so it doesn't waste space in our image:
+apt clean ||:
+rm -rf /var/lib/apt/lists/*

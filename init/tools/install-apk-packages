@@ -1,0 +1,15 @@
+#!/bin/sh
+
+## NOTE: -o pipefail not supported by Debian dash:
+# set -euo pipefail
+set -e -u
+[ "${DEBUG:-}" ] && set -x
+
+. `dirname $0`/errors-lib.sh
+
+[ -f /etc/alpine-release ] || eval_exit_code "" log_warn "'$0' is for Alpine"
+
+[ -n "$*" ] || eval_exit log_error "No package names supplied to install"
+
+apk upgrade --no-cache --update
+apk add --no-cache --update "$@"

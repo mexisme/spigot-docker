@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# Creates the default Docker user "app".
+
+## NOTE: -o pipefail not supported by Debian dash:
+# set -euo pipefail
+set -e -u
+[ "${DEBUG:-}" ] && set -x
+
+# Create the runtime user "app" with $HOME of "/app"
+if [ -f /etc/debian_version ]; then
+  addgroup app
+  adduser --disabled-password \
+          --ingroup app --home /app --shell /bin/sh app
+
+elif [ -f /etc/alpine-release ]; then
+  addgroup app
+  adduser -D -G app -h /app -s /bin/sh app
+
+elif [ -f /etc/centos-release ]; then
+  groupadd app
+  adduser -g app -d /app -s /bin/sh app
+fi
+
+mkdir -p /app/bin
+chown -R app:app /app

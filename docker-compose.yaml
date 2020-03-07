@@ -1,0 +1,54 @@
+version: "3.7"
+
+services:
+  ##########
+  # Initialisers
+
+  # These are "initial" Docker images, setting basics like locales
+  # "app" user and some minimal required packages.
+
+  init:
+    image: base:init
+    build:
+      context: init
+      dockerfile: init.dockerfile
+
+  java:
+    image: base:java
+    build:
+      context: .
+      dockerfile: java.dockerfile
+    depends_on:
+      - init
+
+  spigot:
+    image: spigot:${VERSION:-1.15.2}
+    build:
+      args:
+        VERSION: ${VERSION:-1.15.2}
+      context: .
+      dockerfile: spigot.dockerfile
+    ports:
+      - 25565:25565
+    volumes:
+      - ${DIR:-/opt/minecraft}:/minecraft
+    tty: true
+    depends_on:
+      - java
+
+  multiverse:
+    image: multiverse
+    build:
+      context: .
+      dockerfile: multiverse.dockerfile
+    depends_on:
+      - init
+
+  worldedit:
+    image: worldedit
+    build:
+      context: .
+      dockerfile: worldedit.dockerfile
+    depends_on:
+      - init
+
