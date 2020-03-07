@@ -11,7 +11,7 @@ submodule-update:
 
 .PHONY: init java spigot
 java: init
-#spigot: java
+spigot: java
 init java spigot:
 	VERSION="$(VERSION)" docker-compose build "$@"
 
