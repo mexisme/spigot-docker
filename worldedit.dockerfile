@@ -1,4 +1,4 @@
-FROM base:builder as worldedit
+FROM base:java as worldedit
 
 RUN echo 'org.gradle.jvmargs=-Xmx3G' >gradle.properties
 RUN git clone https://github.com/sk89q/WorldEdit.git

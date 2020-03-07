@@ -1,9 +1,9 @@
-FROM base:builder as build-tools
+FROM base:java as build-tools
 
 RUN git clone https://hub.spigotmc.org/stash/scm/spigot/buildtools.git
 RUN cd buildtools; mvn -B -f ./pom.xml clean install
 
-FROM base:builder as spigot
+FROM base:java as spigot
 ARG VERSION
 
 COPY --from=build-tools /app/buildtools/target/BuildTools.jar ./
