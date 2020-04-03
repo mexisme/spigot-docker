@@ -1,6 +1,17 @@
 #!/usr/bin/env make -f
 
 VERSION = 1.15.2
+DIR=/opt/minecraft
+PORT=25565
+PORT_INSIDE=25565
+
+PROJECT_SUFFIX=
+PROJECT_NAME=minecraft_$(VERSION)$(PROJECT_SUFFIX)
+
+DOCKER_COMPOSE_ARGS=--project-name "$(PROJECT_NAME)"
+
+.PHONY: default
+default: run
 
 .PHONY: all spigot build-tools multiverse worldedit
 all: spigot multiverse worldedit
@@ -9,11 +20,17 @@ all: spigot multiverse worldedit
 submodule-update:
 	git submodule update --remote --init --recursive
 
-.PHONY: init java spigot
+.PHONY: init java spigot minecraft
 java: init
-spigot: java
-init java spigot:
-	VERSION="$(VERSION)" docker-compose build "$@"
+spigot minecraft multiverse worldedit: java
 
+init java multiverse worldedit:
+	VERSION="$(VERSION)" docker-compose $(DOCKER_COMPOSE_ARGS) build "$@"
+
+spigot minecraft:
+	# VERSION="$(VERSION)" docker-compose $(DOCKER_COMPOSE_ARGS) build "$@"
+	VERSION="$(VERSION)" DIR="$(DIR)" PORT="$(PORT)" PORT_INSIDE="$(PORT_INSIDE)" docker-compose $(DOCKER_COMPOSE_ARGS) up --remove-orphans "$@"
+
+.PHONY: run
 run:
 	VERSION="$(VERSION)" docker-compose up spigot

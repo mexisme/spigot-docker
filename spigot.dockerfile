@@ -9,18 +9,28 @@ ARG VERSION
 COPY --from=build-tools /app/buildtools/target/BuildTools.jar ./
 RUN java -jar BuildTools.jar --rev ${VERSION}
 
-FROM gcr.io/distroless/java
+# FROM gcr.io/distroless/java
+# ARG VERSION
+
+# ARG USER=10000
+
+FROM base:java
 ARG VERSION
 
-ARG USER=10000
+COPY --from=spigot /app/spigot-${VERSION}.jar /app/spigot.jar
+COPY --from=spigot /app/BuildTools.log.txt /app/
 
-COPY --from=spigot /app/spigot-${VERSION}.jar /spigot.jar
-COPY --from=spigot /app/BuildTools.log.txt /
+USER root
 
-EXPOSE 25565
+RUN addgroup -g 10000 minecraft
+RUN adduser -u 10000 -D -G minecraft -h /minecraft -s /bin/sh minecraft
+
+USER minecraft
+
 WORKDIR /minecraft
 
+EXPOSE 25565
 # The default ENTRYPOINT is ["java", "-jar"] which doesn't make it easy to add
 # additional args:
 ENTRYPOINT ["java"]
-CMD ["-Xms512M", "-Xmx1G", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/spigot.jar"]
+CMD ["-Xms1G", "-Xmx1G", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/app/spigot.jar"]
