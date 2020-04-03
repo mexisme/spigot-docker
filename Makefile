@@ -39,4 +39,4 @@ run:
 
 .PHONY: backup
 backup:
-	sudo tar -C "$(DIR)" -cvf "$(BACKUP_DIR)/minecraft.$(DATE_STAMP).tar" .w
+	sudo tar -C "$(DIR)" -cvf "$(BACKUP_DIR)/minecraft.$(DATE_STAMP).tar"
