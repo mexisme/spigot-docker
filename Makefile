@@ -10,6 +10,8 @@ PROJECT_NAME=minecraft_$(VERSION)$(PROJECT_SUFFIX)
 
 DOCKER_COMPOSE_ARGS=--project-name "$(PROJECT_NAME)"
 
+DATE_STAMP=$(shell date +%Y%m%h-%H%M%S)
+
 .PHONY: default
 default: run
 
@@ -34,3 +36,7 @@ spigot minecraft:
 .PHONY: run
 run:
 	VERSION="$(VERSION)" docker-compose up spigot
+
+.PHONY: backup
+backup:
+	sudo tar -C "$(DIR)" -cvf "$(BACKUP_DIR)/minecraft.$(DATE_STAMP).tar" .w
