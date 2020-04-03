@@ -32,4 +32,8 @@ $ make minecraft
 
 ## Backup
 
-This will backup the standard dir to `$(PWD)/BACKUP/minecraft.$(DATE).tar`
+This will backup the standard dir to `$(PWD)/BACKUP/minecraft.$(DATE).tar`:
+
+```bash
+$ make backup
+```
