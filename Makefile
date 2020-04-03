@@ -10,13 +10,17 @@ PROJECT_NAME=minecraft_$(VERSION)$(PROJECT_SUFFIX)
 
 DOCKER_COMPOSE_ARGS=--project-name "$(PROJECT_NAME)"
 
+BACKUP_DIR=$(PWD)/BACKUP
 DATE_STAMP=$(shell date +%Y%m%h-%H%M%S)
 
 .PHONY: default
 default: run
 
-.PHONY: all spigot build-tools multiverse worldedit
-all: spigot multiverse worldedit
+.PHONY: build spigot build-tools
+build: spigot
+
+.PHONY: buildm-all spigot build-tools
+build-all: build multiverse worldedit
 
 .PHONY: submodule-update
 submodule-update:
