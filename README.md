@@ -1,18 +1,35 @@
-Build with Packer 0.12 or later (to support the "changes" attr)
+# Minecraft in Docker
 
-Set-up with:
-```
-bundle install
-```
-NB: Should work immediately with Ruby 2.3.1
+## Setup
+- Install Docker and Docker Compose
+- Create a `/opt/minecraft` dir, and make it owned by UID 10000, GID 10000
 
-Build with:
-```
-bundle exec rake build
+```bash
+$ sudo bash -c 'mkdir -pv /opt/minecraft; chown -vR 10000:10000 /opt/minecraft
 ```
 
-Run with:
+## Building
+
+This will build a Spigot-based server:
+
+```bash
+$ make build
 ```
-bundle exec rake run DIR=...
+
+## Running
+
+This will start the Spigot-based server, mounting the data volume on the above `/opt/minecraft` dir.
+
+```bash
+$ make spigot
 ```
-NB: Set `DIR` tp the directory for persisting the world-data and config files.
+
+This will start the standard server:
+
+```bash
+$ make minecraft
+```
+
+## Backup
+
+This will backup the standard dir to `$(PWD)/BACKUP/minecraft.$(DATE).tar`
