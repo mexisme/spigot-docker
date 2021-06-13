@@ -1,7 +1,10 @@
 #!/usr/bin/env make -f
 
 #VERSION = 1.15.2
-VERSION = 1.16.1
+#VERSION = 1.16.4
+VERSION = 1.16.5
+#VERSION = 1.17
+
 PORT=25565
 PORT_INSIDE=25565
 
@@ -33,12 +36,22 @@ spigot minecraft multiverse worldedit: java
 init java multiverse worldedit:
 	VERSION="$(VERSION)" docker-compose $(DOCKER_COMPOSE_ARGS) build "$@"
 
-.PHONY: harry-potter robertson
+.PHONY: harry-potter furniture robertson
 
-harry-potter: VERSION=1.13.2
+harry-potter-1.13.2: VERSION=1.13.2
+harry-potter-1.13.2: DIR=/opt/minecraft-harry_1.13.2
+harry-potter-1.13.2: PORT=25566
+harry-potter-1.13.2: minecraft
+
+harry-potter: VERSION=1.16.3
 harry-potter: DIR=/opt/minecraft-harry
 harry-potter: PORT=25566
 harry-potter: minecraft
+
+furniture: VERSION=1.16.1
+furniture: DIR=/opt/minecraft-furniture
+furniture: PORT=25567
+furniture: minecraft
 
 robertson: DIR=/opt/minecraft
 robertson: spigot
