@@ -16,6 +16,7 @@ RUN chmod ugo+r *.jar
 
 FROM base:java
 ARG VERSION
+ARG JVM_MEMORY=2G
 
 COPY --from=download --chown=app:app /app/minecraft_server-${VERSION}.jar /app/minecraft_server.jar
 
@@ -32,4 +33,4 @@ EXPOSE 25565
 # The default ENTRYPOINT is ["java", "-jar"] which doesn't make it easy to add
 # additional args:
 ENTRYPOINT ["java"]
-CMD ["-Xms2G", "-Xmx2G", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/app/minecraft_server.jar", "nogui"]
+CMD ["-Xms${JVM_MEMORY}", "-Xmx${JVM_MEMORY}", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/app/minecraft_server.jar", "nogui"]
