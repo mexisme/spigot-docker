@@ -8,7 +8,7 @@
 #      A Golang binary built with Debian won't usually work on Alpine out-of-the-box, for example
 
 # Alpine-based:
-ARG PARENT=alpine
+ARG PARENT=alpine:edge
 
 # Debian-based:
 #ARG PARENT=debian
