@@ -60,9 +60,9 @@ terra-swoop-force: minecraft
 #furniture: minecraft
 
 robertson: DIR=/home/minecraft/minecraft
-robertson: spigot
+robertson: spigot16
 
-spigot minecraft:
+spigot11 spigot16 minecraft:
 	$(if $(DIR),,$(error $$DIR is not provided?))
 	$(if $(VERSION),,$(error $$VERSION is not provided?))
 	$(if $(PORT),,$(error $$PORT is not provided?))
