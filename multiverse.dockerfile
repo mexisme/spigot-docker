@@ -1,4 +1,4 @@
-FROM base:java as multiverse-core
+FROM base:java16 as multiverse-core
 
 RUN git clone https://github.com/Multiverse/Multiverse-Core.git
 RUN cd Multiverse-Core; git submodule update --init --recursive
@@ -6,7 +6,7 @@ RUN cd Multiverse-Core; mvn install
 
 RUN mkdir artefacts; cp -aiv Multiverse-Core/target/*.jar artefacts/
 
-FROM base:java as multiverse-portals
+FROM base:java16 as multiverse-portals
 
 RUN git clone https://github.com/Multiverse/Multiverse-Portals.git
 RUN cd Multiverse-Portals; mvn install
