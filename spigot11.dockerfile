@@ -33,4 +33,4 @@ EXPOSE 25565
 # The default ENTRYPOINT is ["java", "-jar"] which doesn't make it easy to add
 # additional args:
 ENTRYPOINT ["java"]
-CMD ["-Xms2G", "-Xmx2G", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/app/spigot.jar"]
+CMD ["-Xms4G", "-Xmx4G", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/app/spigot.jar"]
