@@ -6,6 +6,7 @@ ADD --chown=app:app https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892
 ADD --chown=app:app https://launcher.mojang.com/v1/objects/a412fd69db1f81db3f511c1463fd304675244077/server.jar minecraft_server-1.16.1.jar
 ADD --chown=app:app https://launcher.mojang.com/v1/objects/f02f4473dbf152c23d7d484952121db0b36698cb/server.jar minecraft_server-1.16.3.jar
 ADD --chown=app:app https://launcher.mojang.com/v1/objects/35139deedbd5182953cf1caa23835da59ca3d7cd/server.jar minecraft_server-1.16.4.jar
+ADD --chown=app:app https://launcher.mojang.com/v1/objects/125e5adf40c659fd3bce3e66e67a16bb49ecc1b9/server.jar minecraft_server-1.18.1.jar
 
 RUN chmod ugo+r *.jar
 
@@ -16,9 +17,8 @@ RUN chmod ugo+r *.jar
 
 FROM base:java
 ARG VERSION
-ARG JVM_MEMORY=2G
 
-COPY --from=download --chown=app:app /app/minecraft_server-${VERSION}.jar /app/minecraft_server.jar
+COPY --from=download --chown=app:app /app/minecraft_server-${VERSION}.jar minecraft_server.jar
 
 USER root
 
@@ -33,4 +33,4 @@ EXPOSE 25565
 # The default ENTRYPOINT is ["java", "-jar"] which doesn't make it easy to add
 # additional args:
 ENTRYPOINT ["java"]
-CMD ["-Xms${JVM_MEMORY}", "-Xmx${JVM_MEMORY}", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/app/minecraft_server.jar", "nogui"]
+CMD ["-Xms4G", "-Xmx4G", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/app/minecraft_server.jar", "nogui"]
