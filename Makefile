@@ -30,11 +30,15 @@ submodule-update:
 # VERSION = 1.16.5
 java11 spigot11 minecraft: VERSION=1.16.5
 java16 spigot16 multiverse worldedit: VERSION = 1.17.1
-java11 java16: init
+java17 forge17: VERSION = 1.18.1
+forge17: BUILD_NUM = 39.0.66
+
+java11 java16 java17: init
 spigot11 minecraft: java11
 spigot16 multiverse worldedit: java16
+forge17: java17
 
-init java11 java16 spigot11 spigot16 multiverse worldedit:
+init java11 java16 java17 spigot11 spigot16 forge17 multiverse worldedit:
 	VERSION="$(VERSION)" docker-compose $(DOCKER_COMPOSE_ARGS) build "$@"
 
 .PHONY: harry-potter furniture robertson
@@ -62,13 +66,16 @@ terra-swoop-force: minecraft
 robertson: DIR=/home/minecraft/minecraft
 robertson: spigot16
 
-spigot11 spigot16 minecraft:
+robertson_forge: DIR=/home/minecraft/minecraft_forge
+robertson_forge: forge17
+
+spigot11 spigot16 forge17 minecraft:
 	$(if $(DIR),,$(error $$DIR is not provided?))
 	$(if $(VERSION),,$(error $$VERSION is not provided?))
 	$(if $(PORT),,$(error $$PORT is not provided?))
 	$(if $(PORT_INSIDE),,$(error $$PORT_INSIDE is not provided?))
 	# VERSION="$(VERSION)" docker-compose $(DOCKER_COMPOSE_ARGS) build "$@"
-	VERSION="$(VERSION)" DIR="$(DIR)" PORT="$(PORT)" PORT_INSIDE="$(PORT_INSIDE)" docker-compose $(DOCKER_COMPOSE_ARGS) up --remove-orphans "$@"
+	VERSION="$(VERSION)" BUILD_NUM="$(BUILD_NUM)" DIR="$(DIR)" PORT="$(PORT)" PORT_INSIDE="$(PORT_INSIDE)" docker-compose $(DOCKER_COMPOSE_ARGS) up --remove-orphans "$@"
 
 .PHONY: run
 run:

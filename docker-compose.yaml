@@ -29,6 +29,14 @@ services:
     depends_on:
       - init
 
+  java17:
+    image: base:java17
+    build:
+      context: .
+      dockerfile: java17.dockerfile
+    depends_on:
+      - init
+
   spigot11:
     image: spigot:${VERSION:-1.15.2}
     build:
@@ -49,6 +57,20 @@ services:
         VERSION: ${VERSION:-1.17.1}
       context: .
       dockerfile: spigot16.dockerfile
+    ports:
+      - ${PORT:-25565}:${PORT_INSIDE:-25565}
+    volumes:
+      - ${DIR:-/home/minecraft/minecraft}:/minecraft
+    tty: true
+
+  forge17:
+    image: forge:${VERSION:-1.18.1}
+    build:
+      args:
+        VERSION: ${VERSION:-1.18.1}
+        BUILD_NUM: ${BUILD_NUM:-39.0.66}
+      context: .
+      dockerfile: forge17.dockerfile
     ports:
       - ${PORT:-25565}:${PORT_INSIDE:-25565}
     volumes:

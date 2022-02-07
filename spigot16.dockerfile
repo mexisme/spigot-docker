@@ -1,9 +1,9 @@
-FROM base:java16 as build-tools
+FROM base:java as build-tools
 
 RUN git clone https://hub.spigotmc.org/stash/scm/spigot/buildtools.git
 RUN cd buildtools; mvn -B -f ./pom.xml clean install
 
-FROM base:java16 as spigot
+FROM base:java as spigot
 ARG VERSION
 
 COPY --from=build-tools /app/buildtools/target/BuildTools.jar ./
@@ -14,7 +14,7 @@ RUN java -jar BuildTools.jar --rev ${VERSION}
 
 # ARG USER=10000
 
-FROM base:java16
+FROM base:java
 ARG VERSION
 
 COPY --from=spigot /app/spigot-${VERSION}.jar /app/spigot.jar
@@ -33,4 +33,4 @@ EXPOSE 25565
 # The default ENTRYPOINT is ["java", "-jar"] which doesn't make it easy to add
 # additional args:
 ENTRYPOINT ["java"]
-CMD ["-Xms4G", "-Xmx4G", "-XX:MaxPermSize=128M", "-jar", "/app/spigot.jar"]
+CMD ["-Xms2G", "-Xmx2G", "-XX:MaxPermSize=128M", "-XX:+UseConcMarkSweepGC", "-jar", "/app/spigot.jar"]
