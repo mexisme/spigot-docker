@@ -66,8 +66,8 @@ terra-swoop-force: minecraft
 robertson: DIR=/home/minecraft/minecraft
 robertson: spigot16
 
-robertson_forge: DIR=/home/minecraft/minecraft_forge
-robertson_forge: forge17
+robertson-forge: DIR=/home/minecraft/minecraft-forge
+robertson-forge: forge17
 
 spigot11 spigot16 forge17 minecraft:
 	$(if $(DIR),,$(error $$DIR is not provided?))
