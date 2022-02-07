@@ -15,7 +15,7 @@ RUN chmod ugo+r *.jar
 
 # ARG USER=10000
 
-FROM base:java
+FROM base:java16
 ARG VERSION
 
 COPY --from=download --chown=app:app /app/minecraft_server-${VERSION}.jar minecraft_server.jar
