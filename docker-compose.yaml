@@ -13,6 +13,14 @@ services:
       context: init
       dockerfile: init.dockerfile
 
+  minecraft-downloads:
+    image: base:minecraft-downloads
+    build:
+      context: init
+      dockerfile: minecraft-downloads.dockerfile
+    depends_on:
+      - init
+
   java11:
     image: base:java11
     build:
@@ -44,6 +52,8 @@ services:
         VERSION: ${VERSION:-1.15.2}
       context: .
       dockerfile: spigot11.dockerfile
+    depends_on:
+      - java11
     ports:
       - ${PORT:-25565}:${PORT_INSIDE:-25565}
     volumes:
@@ -57,6 +67,25 @@ services:
         VERSION: ${VERSION:-1.17.1}
       context: .
       dockerfile: spigot16.dockerfile
+    depends_on:
+      - java16
+    ports:
+      - ${PORT:-25565}:${PORT_INSIDE:-25565}
+    volumes:
+      - ${DIR:-/home/minecraft/minecraft}:/minecraft
+    tty: true
+
+  forge16:
+    image: forge:${VERSION:-1.17.1}
+    build:
+      args:
+        VERSION: ${VERSION:-1.17.1}
+        BUILD_NUM: ${BUILD_NUM:-37.1.1}
+      context: .
+      dockerfile: forge16.dockerfile
+    depends_on:
+      - minecraft-downloads
+      - java16
     ports:
       - ${PORT:-25565}:${PORT_INSIDE:-25565}
     volumes:
@@ -71,6 +100,9 @@ services:
         BUILD_NUM: ${BUILD_NUM:-39.0.66}
       context: .
       dockerfile: forge17.dockerfile
+    depends_on:
+      - minecraft-downloads
+      - java17
     ports:
       - ${PORT:-25565}:${PORT_INSIDE:-25565}
     volumes:
@@ -84,6 +116,9 @@ services:
         VERSION: ${VERSION:-1.15.2}
       context: .
       dockerfile: "minecraft-server.dockerfile"
+    depends_on:
+      - minecraft-downloads
+      - java16
     ports:
       - ${PORT:-25565}:${PORT_INSIDE:-25565}
     volumes:

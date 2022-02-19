@@ -1,24 +1,25 @@
 FROM base:minecraft-downloads as mcdownloads
 
-FROM base:java17 as download
+FROM base:java16 as download
 ARG VERSION
 ARG BUILD_NUM
 
 ADD --chown=app:app https://maven.minecraftforge.net/net/minecraftforge/forge/${VERSION}-${BUILD_NUM}/forge-${VERSION}-${BUILD_NUM}-installer.jar forge-installer.jar
-COPY --from=mcdownloads --chown=app:app minecraft_server-1.18.1.jar ./
+# ADD --chown=app:app https://launcher.mojang.com/v1/objects/125e5adf40c659fd3bce3e66e67a16bb49ecc1b9/server.jar minecraft_server-1.18.1.jar
+COPY --from=mcdownloads --chown=app:app minecraft_server-1.17.1.jar ./
 
-FROM base:java17 as build
+FROM base:java16 as build
 ARG VERSION
 
 COPY --from=download --chown=app:app /app/forge-installer.jar /app/forge-installer.jar
-COPY --from=download --chown=app:app /app/minecraft_server-1.18.1.jar /app/server.jar
+COPY --from=download --chown=app:app /app/minecraft_server-1.17.1.jar /app/server.jar
 
 RUN pwd; ls -la
 RUN java -jar forge-installer.jar -installServer /app
 # RUN java -jar forge-installer.jar -debug -installServer /app
 RUN pwd; ls -la
 
-FROM base:java17
+FROM base:java16
 ARG VERSION
 
 USER root

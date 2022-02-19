@@ -29,16 +29,17 @@ submodule-update:
 #VERSION = 1.16.4
 # VERSION = 1.16.5
 java11 spigot11 minecraft: VERSION=1.16.5
-java16 spigot16 multiverse worldedit: VERSION = 1.17.1
+java16 spigot16 forge16 multiverse worldedit: VERSION = 1.17.1
+forge16: BUILD_NUM = 37.1.1
 java17 forge17: VERSION = 1.18.1
 forge17: BUILD_NUM = 39.0.66
 
 java11 java16 java17: init
 spigot11 minecraft: java11
-spigot16 multiverse worldedit: java16
+spigot16 forge16 multiverse worldedit: java16
 forge17: java17
 
-init java11 java16 java17 spigot11 spigot16 forge17 multiverse worldedit:
+init java11 java16 java17 spigot11 spigot16 forge16 forge17 multiverse worldedit:
 	VERSION="$(VERSION)" docker-compose $(DOCKER_COMPOSE_ARGS) build "$@"
 
 .PHONY: harry-potter furniture robertson
@@ -67,9 +68,11 @@ robertson: DIR=/home/minecraft/minecraft
 robertson: spigot16
 
 robertson-forge: DIR=/home/minecraft/minecraft-forge
-robertson-forge: forge17
+robertson-forge: forge16
+# robertson-forge: forge17
+robertson-forge: PORT=25568
 
-spigot11 spigot16 forge17 minecraft:
+spigot11 spigot16 forge16 forge17 minecraft:
 	$(if $(DIR),,$(error $$DIR is not provided?))
 	$(if $(VERSION),,$(error $$VERSION is not provided?))
 	$(if $(PORT),,$(error $$PORT is not provided?))
